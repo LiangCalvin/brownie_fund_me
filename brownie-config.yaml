@@ -14,5 +14,7 @@ networks:
     verify: false  
     etherscan:
       token: ${ETHERSCAN_TOKEN}
+  ganache-local:
+    verify: false
 wallets:
   from_key: ${PRIVATE_KEY}
