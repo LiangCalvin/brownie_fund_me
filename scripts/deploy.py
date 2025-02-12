@@ -1,7 +1,8 @@
-from brownie import network, config, accounts, FundMe, MockV3Aggregator
-from scripts.helpful_scripts import get_account
-from dotenv import load_dotenv
+from brownie import network, config, accounts, FundMe, MockV3Aggregator # type: ignore
+from scripts.helpful_scripts import get_account, deploy_mocks, LOCAL_BLOCKCHAIN_ENVIRONMENTS
+from dotenv import load_dotenv # type: ignore
 import os
+from web3 import Web3 # type: ignore
 
 load_dotenv()
 
@@ -13,16 +14,13 @@ def deploy_fund_me():
         account = get_account()
         print(f"Deploying from account: {account}")
 
-        if network.show_active() != "development":
+        if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
             price_feed_address = config["network"][network.show_active()][
                 "eth_usd_price_feed"
                 ]
         else:
-            print(f"active network = {network.show_active()}")
-            print(f"Deploying mock...")
-            mock_aggregator = MockV3Aggregator.deploy(18,2000000000000000000000, {"from": account})
-            price_feed_address = mock_aggregator.address
-            print("Mock deployed")
+            deploy_mocks()
+            price_feed_address = MockV3Aggregator[-1].address
             
         #pass pricefeed address to our fundme contract        
         fund_me = FundMe.deploy(
