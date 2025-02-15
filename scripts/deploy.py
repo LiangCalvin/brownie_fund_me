@@ -7,7 +7,7 @@ from web3 import Web3 # type: ignore
 load_dotenv()
 
 # Print out the token to verify
-print(f"ETHERSCAN_TOKEN: {os.getenv('ETHERSCAN_TOKEN')}")
+# print(f"ETHERSCAN_TOKEN: {os.getenv('ETHERSCAN_TOKEN')}")
 
 def deploy_fund_me():
     try:
@@ -15,7 +15,7 @@ def deploy_fund_me():
         print(f"Deploying from account: {account}")
 
         if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
-            price_feed_address = config["network"][network.show_active()][
+            price_feed_address = config["networks"][network.show_active()][
                 "eth_usd_price_feed"
                 ]
         else:
@@ -28,10 +28,10 @@ def deploy_fund_me():
             {"from": account}, publish_source=config["networks"][network.show_active()].get("verify"))
         print(f"Contract deployed to {fund_me.address}")
     except Exception as e:
-        print(f"Error during deployment: {str(e)}")
+        print(f"Error during deployment: {str(e)}")   
+        
 def main():
-    # try:
-    #     deploy_fund_me()
-    # except Exception as e:
-    #     print(f"An error occurred: {str(e)}")
+    try:
         deploy_fund_me()
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")

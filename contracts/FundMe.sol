@@ -2,7 +2,7 @@
 
 // Smart contract that lets anyone deposit ETH into the contract
 // Only the owner of the contract can withdraw the ETH
-pragma solidity ^0.6.6;
+pragma solidity ^0.8.4;
 
 // Get the latest ETH/USD price from chainlink price feed
 
@@ -10,8 +10,11 @@ pragma solidity ^0.6.6;
 // Please see: https://docs.chain.link/docs/get-the-latest-price/
 // For more information
 
-import "@chainlink/contracts/src/v0.6/interfaces/AggregatorV3Interface.sol";
-import "@chainlink/contracts/src/v0.6/vendor/SafeMathChainlink.sol";
+// import "@chainlink/contracts/src/v0.6/interfaces/AggregatorV3Interface.sol";
+// import "@chainlink/contracts/src/v0.6/vendor/SafeMathChainlink.sol";
+import { AggregatorV3Interface } from "@chainlink/contracts/src/v0.6/interfaces/AggregatorV3Interface.sol";
+import { SafeMathChainlink } from "@chainlink/contracts/src/v0.6/vendor/SafeMathChainlink.sol";
+
 
 contract FundMe {
     // safe math library check uint256 for integer overflows
@@ -26,7 +29,7 @@ contract FundMe {
     AggregatorV3Interface public priceFeed;
     // the first person to deploy the contract is
     // the owner
-    constructor(address _priceFeed) public {
+    constructor(address _priceFeed) {
         priceFeed = AggregatorV3Interface(_priceFeed);
         owner = msg.sender;
     }
@@ -46,16 +49,16 @@ contract FundMe {
 
     //function to get the version of the chainlink pricefeed
     function getVersion() public view returns (uint256) {
-        // AggregatorV3Interface priceFeed = AggregatorV3Interface(
-        //     0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e
-        // );
+        AggregatorV3Interface priceFeed = AggregatorV3Interface(
+            0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e
+        );
         return priceFeed.version();
     }
 
     function getPrice() public view returns (uint256) {
-        // AggregatorV3Interface priceFeed = AggregatorV3Interface(
-        //     0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e
-        // );
+        AggregatorV3Interface priceFeed = AggregatorV3Interface(
+            0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e
+        );
         (, int256 answer, , , ) = priceFeed.latestRoundData();
         // ETH/USD rate in 18 digit
         return uint256(answer * 10000000000);
@@ -73,7 +76,7 @@ contract FundMe {
         return ethAmountInUsd;
     }
 
-    function getEntranceFee() public view (uint256) {
+    function getEntranceFee() public view returns (uint256) {
         //minimumUSD
         uint256 minimumUSD = 50 * 10**18;
         uint256 price = getPrice();
@@ -93,7 +96,7 @@ contract FundMe {
     // and
     // if true, withdraw function will be executed
     function withdraw() public payable onlyOwner {
-        msg.sender.transfer(address(this).balance);
+        payable(msg.sender).transfer(address(this).balance);
 
         //iterate through all the mappings and make them 0
         //since all the deposited amount has been withdrawn
