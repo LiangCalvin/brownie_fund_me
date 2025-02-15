@@ -8,10 +8,8 @@ compiler:
 dotenv: .env
 networks:
   sepolia:
-    eth_usd_price_feed: '0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e'
+    host: https://sepolia.infura.io/v3/761d2363bdb147f4babc971dd1a4c921
     verify: true
-  development:
-    verify: false  
     etherscan:
       token: ${ETHERSCAN_TOKEN}
   ganache-local:

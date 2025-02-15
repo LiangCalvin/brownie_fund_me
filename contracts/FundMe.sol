@@ -29,11 +29,13 @@ contract FundMe {
     AggregatorV3Interface public priceFeed;
     // the first person to deploy the contract is
     // the owner
-    constructor(address _priceFeed) {
-        priceFeed = AggregatorV3Interface(_priceFeed);
+    // constructor(address _priceFeed) {
+    //     priceFeed = AggregatorV3Interface(_priceFeed);
+    //     owner = msg.sender;
+    // }
+    constructor() public {
         owner = msg.sender;
     }
-
     function fund() public payable {
         // 18 digit number to be compared with donated amount
         uint256 minimumUSD = 50 * 10**18;
