@@ -12,8 +12,19 @@ print(f"ETHERSCAN_TOKEN: {os.getenv('ETHERSCAN_TOKEN')}")
 def deploy_fund_me():
     # try:
         account = get_account()
-        # print(f"Deploying from account: {account}")
+        print(f"Deploying from account: {account}")
+        # pass the price feed address to our fundme contract
 
+        # if we are on a persistent network like rinkeby, use the associated address
+        # otherwise, deploy mocks
+        if network.show_active() != "development":
+            price_feed_address = config["networks"][network.show_active()]["eth_usd_price_feed"]
+        
+        fund_me = FundMe.deploy(
+            price_feed_address,
+            {"from": account}, publish_source=True)
+        print(f"Contract deployed to {fund_me.address}")
+        
         # if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
         #     price_feed_address = config["networks"][network.show_active()][
         #         "eth_usd_price_feed"
@@ -26,8 +37,7 @@ def deploy_fund_me():
         # fund_me = FundMe.deploy(
         #     price_feed_address,
         #     {"from": account}, publish_source=config["networks"][network.show_active()].get("verify"))
-        fund_me = FundMe.deploy({"from": account}, publish_source=True)
-        print(f"Contract deployed to {fund_me.address}")
+        
     # except Exception as e:
     #     print(f"Error during deployment: {str(e)}")   
         

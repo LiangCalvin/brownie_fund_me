@@ -13,6 +13,7 @@ networks:
     explorer: https://api-sepolia.etherscan.io/api
     etherscan:
       token: ${ETHERSCAN_TOKEN}
+    eth_usd_price_feed: '0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e'
   ganache-local:
     verify: false
 wallets:
