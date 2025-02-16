@@ -8,8 +8,9 @@ compiler:
 dotenv: .env
 networks:
   sepolia:
-    host: https://sepolia.infura.io/v3/761d2363bdb147f4babc971dd1a4c921
-    verify: true
+    host: https://sepolia.infura.io/v3/${WEB3_INFURA_PROJECT_ID}
+    chainid: 11155111
+    explorer: https://api-sepolia.etherscan.io/api
     etherscan:
       token: ${ETHERSCAN_TOKEN}
   ganache-local:

@@ -29,13 +29,11 @@ contract FundMe {
     AggregatorV3Interface public priceFeed;
     // the first person to deploy the contract is
     // the owner
-    // constructor(address _priceFeed) {
-    //     priceFeed = AggregatorV3Interface(_priceFeed);
-    //     owner = msg.sender;
-    // }
-    constructor() public {
+    constructor(address _priceFeed) {
+        priceFeed = AggregatorV3Interface(_priceFeed);
         owner = msg.sender;
     }
+
     function fund() public payable {
         // 18 digit number to be compared with donated amount
         uint256 minimumUSD = 50 * 10**18;
@@ -58,9 +56,9 @@ contract FundMe {
     }
 
     function getPrice() public view returns (uint256) {
-        AggregatorV3Interface priceFeed = AggregatorV3Interface(
-            0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e
-        );
+        // AggregatorV3Interface priceFeed = AggregatorV3Interface(
+        //     0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e
+        // );
         (, int256 answer, , , ) = priceFeed.latestRoundData();
         // ETH/USD rate in 18 digit
         return uint256(answer * 10000000000);
@@ -76,14 +74,6 @@ contract FundMe {
         uint256 ethAmountInUsd = (ethPrice * ethAmount) / 1000000000000000000;
         // the actual ETH/USD conversation rate, after adjusting the extra 0s.
         return ethAmountInUsd;
-    }
-
-    function getEntranceFee() public view returns (uint256) {
-        //minimumUSD
-        uint256 minimumUSD = 50 * 10**18;
-        uint256 price = getPrice();
-        uint256 precision = 1 * 10**18;
-        return (minimumUSD * precision) / price;
     }
 
     //modifier: https://medium.com/coinmonks/solidity-tutorial-all-about-modifiers-a86cf81c14cb
