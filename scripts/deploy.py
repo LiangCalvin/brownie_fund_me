@@ -1,19 +1,25 @@
-from brownie import network, config, accounts, FundMe, MockV3Aggregator # type: ignore
-from scripts.helpful_scripts import get_account, deploy_mocks
-from dotenv import load_dotenv # type: ignore
+from brownie import network, config, accounts, FundMe, MockV3Aggregator
+from scripts.helpful_scripts import get_account, deploy_mocks, LOCAL_BLOCKCHAIN_ENVIRONMENTS
+from dotenv import load_dotenv
 import os
-from web3 import Web3 # type: ignore
+from web3 import Web3
 
 load_dotenv()
 
 def deploy_fund_me():
     try:
         account = get_account()
-        if network.show_active() != "development":
+        # pass the pricefeed address to our fundme contract
+
+# if we are on a persistent network like rinkeby, use the associated address
+        if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
             price_feed_address = config["networks"][network.show_active()][
                 "eth_usd_price_feed"
                 ]
+# otherwise, deploy mocks
         else:
+            print(f"The active network is {network.show_active()}")
+            print(f"Deploying Mocks...")
             deploy_mocks()
             price_feed_address = MockV3Aggregator[-1].address
 
@@ -24,21 +30,6 @@ def deploy_fund_me():
         print(f"Contract deployed to {fund_me.address}")
     except Exception as e:
         print(f"Error during deployment: {str(e)}")
-        # if network.show_active() not in LOCAL_BLOCKCHAIN_ENVIRONMENTS:
-        #     price_feed_address = config["networks"][network.show_active()][
-        #         "eth_usd_price_feed"
-        #         ]
-        # else:
-        #     deploy_mocks()
-        #     price_feed_address = MockV3Aggregator[-1].address
-            
-        #pass pricefeed address to our fundme contract        
-        # fund_me = FundMe.deploy(
-        #     price_feed_address,
-        #     {"from": account}, publish_source=config["networks"][network.show_active()].get("verify"))
-        
-    # except Exception as e:
-    #     print(f"Error during deployment: {str(e)}")   
         
 def main():
     # try:
