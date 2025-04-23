@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.4;
+pragma solidity ^0.6.6;
 
-import "@chainlink/contracts/src/v0.6/interfaces/AggregatorV2V3Interface.sol";
+import { AggregatorV2V3Interface } from "@chainlink/contracts/src/v0.6/interfaces/AggregatorV2V3Interface.sol";
 
 /**
  * @title MockV3Aggregator
@@ -12,7 +12,7 @@ import "@chainlink/contracts/src/v0.6/interfaces/AggregatorV2V3Interface.sol";
  * its answer is unimportant
  */
 contract MockV3Aggregator is AggregatorV2V3Interface {
-  uint256 constant public override version = 0;
+  uint256 constant public VERSION = 0;
 
   uint8 public override decimals;
   int256 public override latestAnswer;
@@ -106,6 +106,16 @@ contract MockV3Aggregator is AggregatorV2V3Interface {
   {
     return "v0.6/tests/MockV3Aggregator.sol";
   }
+
+  function version()
+    external
+    view
+    override
+    returns (uint256)
+{
+    return VERSION;
+}
+
 }
 
 // MockOracle
