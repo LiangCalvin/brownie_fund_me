@@ -2,7 +2,7 @@
 
 // Smart contract that lets anyone deposit ETH into the contract
 // Only the owner of the contract can withdraw the ETH
-pragma solidity ^0.8.4;
+pragma solidity ^0.6.6 <0.9.0;
 
 // Get the latest ETH/USD price from chainlink price feed
 
@@ -10,8 +10,6 @@ pragma solidity ^0.8.4;
 // Please see: https://docs.chain.link/docs/get-the-latest-price/
 // For more information
 
-// import "@chainlink/contracts/src/v0.6/interfaces/AggregatorV3Interface.sol";
-// import "@chainlink/contracts/src/v0.6/vendor/SafeMathChainlink.sol";
 import { AggregatorV3Interface } from "@chainlink/contracts/src/v0.6/interfaces/AggregatorV3Interface.sol";
 import { SafeMathChainlink } from "@chainlink/contracts/src/v0.6/vendor/SafeMathChainlink.sol";
 
@@ -29,7 +27,7 @@ contract FundMe {
     AggregatorV3Interface public priceFeed;
     // the first person to deploy the contract is
     // the owner
-    constructor(address _priceFeed) {
+    constructor(address _priceFeed) public {
         priceFeed = AggregatorV3Interface(_priceFeed);
         owner = msg.sender;
     }
@@ -49,16 +47,10 @@ contract FundMe {
 
     //function to get the version of the chainlink pricefeed
     function getVersion() public view returns (uint256) {
-        AggregatorV3Interface priceFeed = AggregatorV3Interface(
-            0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e
-        );
         return priceFeed.version();
     }
 
     function getPrice() public view returns (uint256) {
-        // AggregatorV3Interface priceFeed = AggregatorV3Interface(
-        //     0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e
-        // );
         (, int256 answer, , , ) = priceFeed.latestRoundData();
         // ETH/USD rate in 18 digit
         return uint256(answer * 10000000000);
@@ -79,7 +71,7 @@ contract FundMe {
     //modifier: https://medium.com/coinmonks/solidity-tutorial-all-about-modifiers-a86cf81c14cb
     modifier onlyOwner() {
         //is the message sender owner of the contract?
-        require(msg.sender == owner);
+        require(msg.sender == owner, "Caller is not the owner");
 
         _;
     }
@@ -88,8 +80,6 @@ contract FundMe {
     // and
     // if true, withdraw function will be executed
     function withdraw() public payable onlyOwner {
-        payable(msg.sender).transfer(address(this).balance);
-
         //iterate through all the mappings and make them 0
         //since all the deposited amount has been withdrawn
         for (
@@ -102,5 +92,8 @@ contract FundMe {
         }
         //funders array will be initialized to 0
         funders = new address[](0);
+
+        // transfer the balance to the owner
+        payable(msg.sender).transfer(address(this).balance);
     }
 }
