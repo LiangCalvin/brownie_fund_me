@@ -28,6 +28,7 @@ def deploy_fund_me():
             {"from": account, "gas_price": Web3.to_wei(30, "gwei"), "gas_limit": 5000000}, 
             publish_source=config["networks"][network.show_active()].get("verify"))
         print(f"Contract deployed to {fund_me.address}")
+        return fund_me
     except Exception as e:
         print(f"Error during deployment: {str(e)}")
         
