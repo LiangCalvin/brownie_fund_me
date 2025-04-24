@@ -53,7 +53,7 @@ contract FundMe {
     function getPrice() public view returns (uint256) {
         (, int256 answer, , , ) = priceFeed.latestRoundData();
         // ETH/USD rate in 18 digit
-        return uint256(answer * 10000000000);
+        return uint256(answer * 1e10);
     }
 
     // 1000000000
@@ -66,6 +66,16 @@ contract FundMe {
         uint256 ethAmountInUsd = (ethPrice * ethAmount) / 1000000000000000000;
         // the actual ETH/USD conversation rate, after adjusting the extra 0s.
         return ethAmountInUsd;
+    }
+
+    function getEntranceFee() public view returns (uint256) {
+        // minimum 50 USD
+        uint256 minimumUSD = 50 * 1e18;
+        // get the price of ETH in USD
+        uint256 ethPrice = getPrice();
+        // calculate the entrance fee in ETH
+        uint256 precision = 1 * 1e18;
+        return (minimumUSD * precision) / ethPrice;
     }
 
     //modifier: https://medium.com/coinmonks/solidity-tutorial-all-about-modifiers-a86cf81c14cb
