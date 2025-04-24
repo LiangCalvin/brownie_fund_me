@@ -115,6 +115,9 @@ contract MockV3Aggregator is AggregatorV2V3Interface {
 {
     return VERSION;
 }
+function placeholder() external view override {
+  return;
+}
 
 }
 
